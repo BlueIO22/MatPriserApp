@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  </head>
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">{{title}}</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navbar">
+      <ul class="nav navbar-nav">
+        {{#links}}
+        <li><a href="{{url}}">{{name}}</a></li>
+        {{/links}}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+    <div class="col-md-12">
+<br><br>
+      <div class="panel panel-default">
+        <br>
+
+    <div class="container-fluid">
+      <div class="jumbotron">
+        <br><p>Matappen er her!</p><br>
+        <h4>Her finner du ulike kategorier med Matprodukter.</h4>
+        <div class="container-fluid">
+          <input type="text" class="form-control" placeholder="Søk her">
+        </div>
+
+        <br>
+        <div class="panel panel-success">
+            <ul class="list-group">
+              {{#matprodukter}}
+              <li class="list-group-item"><h4>{{name}}</h4><i>Pris: {{price}}</i></li>
+              {{/matprodukter}}
+            </ul>
+        </div>
+
+      </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</html>

@@ -1,0 +1,35 @@
+{
+    "program":{
+        "title": "Matjakt",
+        "version": "Beta 1.0",
+        "developer": "Marius Sørenes",
+
+        "links":[
+            {
+                "name": "Forside",
+                "url": "/index"
+            },{
+                "name": "Registrer kvitering",
+                "url": "/reciete"
+            },{
+                "name": "Om Nettsiden",
+                "url": "/about"
+            }
+        ],
+        "matprodukter":[
+          {
+            "name":"Coca Cola",
+            "price":"30"
+          },{
+            "name":"Pepsi Max",
+            "price": "30"
+          },{
+            "name":"Knekkebrød(Wasa)",
+            "price": "20"
+          }
+        ],
+        "root": "./"
+
+
+    }
+}
