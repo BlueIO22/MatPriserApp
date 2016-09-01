@@ -9,9 +9,8 @@ var waterfall = require('async-waterfall');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-console.log("Hello World");
 server.listen(8087);
-
+var socket = "";
 
 
 app.use(cookieParser());
@@ -31,6 +30,9 @@ connection.connect();
 
 connection.query('USE matpriser');
 
+io.on('connection', function (sockete) {
+   socket = sockete;
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -63,8 +65,9 @@ router.post('/getProdukter', function(req, res){
                  for(var i = 0; i<rows.length; i++){
                    var type = rows[i].id;
                    var name = rows[i].name;
+                   var id = rows[i].id;
 
-                   callback(null, {name: name, type: type});
+                   callback(null, {name: name, type: type, id: id});
                  }
               }
               return;
@@ -72,7 +75,7 @@ router.post('/getProdukter', function(req, res){
         },
         function getCount(item, callback){
             connection.query('select count(*) AS ct from products where typeid="' + item.type + '"', function(err, row){
-                  callback(null, {count: row[0].ct, name: item.name, type: item.type});
+                  callback(null, {count: row[0].ct, name: item.name, type: item.type, id:item.id});
 
             });
         }
@@ -81,9 +84,28 @@ router.post('/getProdukter', function(req, res){
       if(err){
          console.log(err);
       }
-      io.sockets.emit('sendData', result)
+      console.log("hello");
+      socket.emit('sendData', result)
     });
 });
+
+router.post('/getCategory', function(req, res){
+   var obj = [];
+   var id = req.body.id;
+   connection.query('select * from products where typeid=' +  id, function(err, rows){
+     if(rows.length !== 0){
+       for(var i = 0; i<rows.length; i++){
+         var name = rows[i].name;
+         var type = rows[i].typeid;
+         var price = rows[i].price;
+
+         obj.push({name: name, type: type, price: price});
+       }
+     }
+     res.send(obj);
+   });
+});
+
 
 router.post('/getProdukterFromSearch', function(req, res){
 

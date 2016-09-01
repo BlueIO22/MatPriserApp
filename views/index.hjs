@@ -32,24 +32,13 @@
 
 
 
-    <div class="col-md-12">
+    <div class="col-md-4">
 <br><br>
       <div class="panel panel-default">
         <br>
 
-    <div class="container-fluid">
-      <h4><i>Main &#8594; Matappen</i></h4>
-      <div class="jumbotron">
-        <div class="container-fluid">
-        <br><p>Matappen er her!</p><br>
-        <h4>Her finner du ulike kategorier med Matprodukter.</h4>
-          <input type="text" id="search" class="form-control" placeholder="Søk her">
-        </div>
-
-        <datalist id="datalist">
-
-        </datalist>
-
+    <div class="container-fluid" align="center">
+      <h4><i>Kategorier</i></h4>
         <br>
         <div class="panel panel-success">
             <ul class="list-group" id="liste">
@@ -62,6 +51,18 @@
       </div>
       </div>
     </div>
+
+    <div class="col-md-8">
+      <div class="container-fluid">
+      <br><h1>Matappen er her!</h1><br>
+      <h4>Her finner du ulike kategorier med Matprodukter.</h4>
+        <input type="text" id="search" class="form-control" placeholder="Søk her">
+        <br>
+        <ul class="list-group" id="liste-item"></ul>
+
+       </div>
+
+
   </body>
 
   <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
@@ -77,29 +78,27 @@
 
         var i = 0;
         socket.on('sendData', function(data){
-
-            console.log(i);
+             console.log(i);
             var type = data.name;
 
             var text =  type + " ";
-            $('<li/>', { 'name':data.type, 'class':'list-group-item','id':'li' + i}).appendTo('#liste');
-            $('<h2/>', {'text':text, 'align': 'center', 'id':'lbl' + i}).appendTo('#li' + i);
-            $('<span/>', {'text':data.count, 'class':'badge', 'style':'margin:0;'}).appendTo('#lbl' + i);
+            $('<li/>', { 'name':data.id, 'class':'list-group-item','id':'lis' + i}).appendTo('#liste');
+            $('<h4/>', {'text':text, 'align': 'center', 'id':'lbl' + i}).appendTo('#lis' + i);
+            $('<span/>', {'text':data.count,'class':'pull-right label label-default'}).appendTo('#lbl' + i);
 
 
-            $('#liste').on('click', '#li' +  i, function(){
+
+            $('#liste').on('click', '#lis' +  i, function(){
               var name = $(this).attr('name');
               $("#liste li").parent().find('li').removeClass("active");
               $(this).addClass("active");
 
-              $.ajax({
-                url: '/getProdukterFrom'
-              });
+              getCategory($(this).attr('name'));
             });
 
             i++;
         });
-
+        console.log("hello world");
         $.ajax({
           url: '/getProdukter',
           type: 'POST',
@@ -126,21 +125,22 @@
           contentType: 'application/json; charset=utf-8',
           async: false,
           success: function(data){
-            $('#liste').empty();
+            $('#liste-item').empty();
             for(var i = 0; i<data.length; i++){
 
               var name = data[i].name;
               var price = data[i].price;
               var type = data[i].type;
 
-              var text = '<h4>' + name + '</h4><i>Pris: ' + price + '<br>' + type +  '</i>';
 
-              $('<li/>', { 'name':name, 'html':text, 'class':'list-group-item','id':'li' + i}).appendTo('#liste');
+              $('<li/>', { 'name':name, 'class':'list-group-item','id':'li' + i}).appendTo('#liste-item');
+              $('<span/>', {'id':'spn' + i, 'class':'pull-right'}).appendTo('#li' + i);
+              $('<h4/>', {'text':name }).appendTo('#li' + i);
+              $('<p/>', {'html':'<i>Pris: ' + price  + '<br>' + 'Kategori: ' + type + '</i>'}).appendTo('#li' + i);
+              $('<button/>', {'name': name, 'id':'btnliste' + i, 'class':'btn btn-success', 'style':'vertical-align: middle;','text':'Valg'}).appendTo('#spn' +  i);
 
-              $('#liste').on('click', '#li' +  i, function(){
-                var name = $(this).attr('name');
-                $("#liste li").parent().find('li').removeClass("active");
-                $(this).addClass("active");
+              $('#li' + i).children('#spn' + i).on('click', '#btnliste' +  i, function(){
+                 console.log("clicked me!" +  $(this).attr('name'));
               });
 
             }
@@ -149,6 +149,37 @@
         });
       });
 
+      function getCategory(databaseid){
+           $.ajax({
+             url: '/getCategory',
+             type: 'POST',
+             dataType: 'json',
+             data: JSON.stringify({id: databaseid}),
+             contentType: 'application/json; charset=utf-8',
+             async: false,
+             success: function(data){
+               $('#liste-item').empty();
+               for(var i = 0; i<data.length; i++){
+
+                 var name = data[i].name;
+                 var price = data[i].price;
+                 var type = data[i].type;
+
+
+                 $('<li/>', { 'name':name, 'class':'list-group-item','id':'li' + i}).appendTo('#liste-item');
+                 $('<span/>', {'id':'spn' + i, 'class':'pull-right'}).appendTo('#li' + i);
+                 $('<h4/>', {'text':name }).appendTo('#li' + i);
+                 $('<p/>', {'html':'<i>Pris: ' + price  + '<br>' + 'Kategori: ' + type + '</i>'}).appendTo('#li' + i);
+                 $('<button/>', {name: name, 'class':'btn btn-success','id':'btnliste' + i, 'style':'vertical-align: middle;','text':'Valg'}).appendTo('#spn' +  i);
+
+                 $('#li' + i).children('#spn' + i).on('click', '#btnliste' +  i, function(){
+                    console.log("clicked me!" +  $(this).attr('name'));
+                 });
+
+               }
+             }
+           });
+      }
 
   </script>
 </html>
